@@ -10,12 +10,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-app.use(
-  cors({
-    origin: ["http://localhost:5173"],
-    methods: ["GET", "POST"],
-  }),
-);
+app.use(cors());
 app.use(express.json());
 
 // =====================
@@ -91,6 +86,14 @@ async function run() {
   app.get("/blogs", async (req, res) => {
     res.send(await db.collection("blogs").find().toArray());
   });
+  app.get("/blogs/:id", async (req, res) => {
+    const id = req.params.id;
+    const blogs = await db.collection("blogs").find().toArray();
+    const blog = blogs.find((b) => b.id === id);
+    res.send(blog ? [blog] : []);
+  });
+
+  // await client.close();
 }
 run().catch(console.error);
 
